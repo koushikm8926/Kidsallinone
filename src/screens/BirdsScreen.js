@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const BirdsScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Birds List</Text>
+      <Text style={styles.text}>Birds Listttt</Text>
     </View>
   );
 };
