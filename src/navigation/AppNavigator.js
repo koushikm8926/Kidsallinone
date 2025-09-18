@@ -24,9 +24,9 @@ export default function AppNavigator() {
     <NavigationContainer>
           <Stack.Navigator initialRouteName="Home">
           
-          <Stack.Screen   name="Home"   component={HomeScreen}   options={{ headerShown: false }} />
+          <Stack.Screen   name="Home"   component={HomeScreen}  options={{animation: 'slide_from_right',headerShown:false}} />
           
-          <Stack.Screen name="Animals" component={AnimalsScreen}  options={{ headerShown: false }} />     
+          <Stack.Screen name="Animals" component={AnimalsScreen} options={{animation: 'slide_from_right',headerShown:false}} />     
           <Stack.Screen  name="Birds"   component={BirdsScren}   options={{ headerShown: false }} />
          
           <Stack.Screen  name="Numbers"   component={NumbersScreen}   options={{ headerShown: false }} />          

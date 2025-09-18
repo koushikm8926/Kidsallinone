@@ -3,8 +3,11 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const { width } = Dimensions.get('window');
+
+
+const { width, height } = Dimensions.get('window');
 
 const animalData = [
   { id: '1', name: 'Lion', image: { uri: 'https://media.istockphoto.com/id/1333977253/photo/male-lion-resting-on-a-rock.jpg?s=612x612&w=0&k=20&c=JZSHUW-GSk49vNiTGwRryqiG2H0HgDh0q7P1Ny985L4=' } },
@@ -19,7 +22,7 @@ const animalData = [
   { id: '10', name: 'Panda', image: { uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm2Qx8YYYGenxcsRtWqRknEzoAJv6eg4vJXg&s' } },
 ];
 
-// create looped data with head & tail clones
+// add head/tail clones for infinite loop
 const loopedData = [
   { ...animalData[animalData.length - 1], id: 'head-clone', __clone: true },
   ...animalData,
@@ -28,16 +31,12 @@ const loopedData = [
 
 const AnimalScreen = () => {
   const flatListRef = useRef(null);
-  const lastSpokenIndexRef = useRef(null); // prevents duplicate speak for same index
-  const [initialised, setInitialised] = useState(false);
+  const lastSpokenIndexRef = useRef(null);
+  const [initialized, setInitialized] = useState(false);
 
-  // speak function: index is real animalData index (0..N-1)
   const speakAnimal = (realIndex, force = false) => {
     if (!animalData[realIndex]) return;
-    if (!force && lastSpokenIndexRef.current === realIndex) {
-      // already spoke this index recently — skip
-      return;
-    }
+    if (!force && lastSpokenIndexRef.current === realIndex) return;
 
     try {
       Tts.stop();
@@ -48,32 +47,23 @@ const AnimalScreen = () => {
     }
   };
 
-  // on mount: jump to first real item (index 1 in loopedData) and speak once
   useEffect(() => {
-    // small timeout to ensure FlatList ref is ready
     const t = setTimeout(() => {
-      if (flatListRef.current && !initialised) {
-        flatListRef.current.scrollToIndex({ index: 1, animated: false }); // position to first real
-        speakAnimal(0, true); // force speak first item exactly once
-        setInitialised(true);
+      if (flatListRef.current && !initialized) {
+        flatListRef.current.scrollToIndex({ index: 1, animated: false });
+        speakAnimal(0, true);
+        setInitialized(true);
       }
     }, 50);
     return () => clearTimeout(t);
-  }, [initialised]);
+  }, [initialized]);
 
-  // render item: use the looped data index to get realIndex = index-1
   const renderItem = ({ item, index }) => {
-    if (item.__clone) {
-      // render an empty slot for clones (keeps layout)
-      return <View style={{ width }} />;
-    }
+    if (item.__clone) return <View style={{ width }} />;
     const realIndex = index - 1;
     return (
       <TouchableWithoutFeedback onPress={() => speakAnimal(realIndex, true)}>
-        <View style={styles.itemContainer}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>Animal</Text>
-          </View>
+        <View style={styles.slide}>
           <Image source={item.image} style={styles.image} />
           <Text style={styles.name}>{item.name}</Text>
         </View>
@@ -81,21 +71,15 @@ const AnimalScreen = () => {
     );
   };
 
-  // on scroll settle, compute real index and speak (duplicates skipped by lastSpokenIndexRef)
   const handleScrollEnd = (event) => {
     let index = Math.round(event.nativeEvent.contentOffset.x / width);
 
     if (index === 0) {
-      // reached head clone -> jump to last real item
-      const jumpTo = animalData.length;
-      flatListRef.current.scrollToIndex({ index: jumpTo, animated: false });
-      const realIndex = animalData.length - 1;
-      speakAnimal(realIndex);
+      flatListRef.current.scrollToIndex({ index: animalData.length, animated: false });
+      speakAnimal(animalData.length - 1);
       return;
     }
-
     if (index === loopedData.length - 1) {
-      // reached tail clone -> jump to first real item
       flatListRef.current.scrollToIndex({ index: 1, animated: false });
       speakAnimal(0);
       return;
@@ -108,17 +92,30 @@ const AnimalScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <FlatList
-          ref={flatListRef}
-          data={loopedData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScrollEnd}
-          getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
-        />
+        {/* Static Header */}
+        <View style={styles.header}>
+           <Ionicons name="chevron-back-circle" color="#000" size={24} />
+          <Text style={styles.headerText}>Animal</Text>
+        </View>
+
+        {/* Center block for sliding */}
+        <View style={styles.sliderWrapper}>
+          <FlatList
+            ref={flatListRef}
+            data={loopedData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleScrollEnd}
+            getItemLayout={(data, index) => ({
+              length: width,
+              offset: width * index,
+              index,
+            })}
+          />
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -126,36 +123,46 @@ const AnimalScreen = () => {
 
 export default AnimalScreen;
 
-// styles below are kept as you had them
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  itemContainer: {
-    width,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   header: {
-    backgroundColor: '#FF6B6B',
-    width: '93%',
-    alignSelf: 'center',
-    paddingVertical: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    marginTop: 5,
-    height: 100,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FF6B6B',
+    // borderBottomLeftRadius: 15,
+    // borderBottomRightRadius: 15,
   },
-  headerText: { fontSize: 20, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  sliderWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'grey' ,// this is for debugging 
+  
+
+   
+  },
+  slide: {
+    width,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   image: {
-    width: width * 0.8,
-    height: width * 0.6,
+    width: width * 0.7,
+    height: height * 0.4,
     resizeMode: 'contain',
-    marginVertical: 20,
+    marginBottom: 20,
   },
-  name: { fontSize: 26, fontWeight: '600' },
+  name: {
+    fontSize: 28,
+    fontWeight: '600',
+  },
 });
