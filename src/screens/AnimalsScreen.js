@@ -3,7 +3,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 
 
@@ -92,11 +93,31 @@ const AnimalScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
+       
+       
+       
         {/* Static Header */}
-        <View style={styles.header}>
-           <Ionicons name="chevron-back-circle" color="#000" size={24} />
-          <Text style={styles.headerText}>Animal</Text>
-        </View>
+       
+       <View style={styles.header}>
+         
+         {/* Left side text */}
+       
+         <View style={styles.headerTextBlock}>
+           <Ionicons name="arrow-back-circle-outline" size={35} color="black" />
+           <Text style={styles.greeting}>Animals</Text>
+         </View>
+       
+         {/* Right side image */}
+         <Image
+           source={require('../assets/girl2.png')} // put your image path here
+           style={styles.girlImage}
+           resizeMode="contain"
+         />
+       
+       </View>
+
+
+
 
         {/* Center block for sliding */}
         <View style={styles.sliderWrapper}>
@@ -128,19 +149,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    height: 80,
-    justifyContent: 'center',
+
+header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FF6B6B',
-    // borderBottomLeftRadius: 15,
-    // borderBottomRightRadius: 15,
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    width: '100%',
+    //backgroundColor:'grey'
   },
-  headerText: {
-    fontSize: 24,
+  headerTextBlock: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  greeting: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#000',
+  },
+  kidsText: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#FF6B6B', // vibrant color for kids
+    marginTop: 2,
   },
+girlImage: {
+  width: 100,
+  height: 100,
+  borderRadius: 10,
+  marginBottom: 15, // lifts the image upward
+  // or you can use: alignSelf: 'flex-start',
+},
+
+
+
+
+
   sliderWrapper: {
     flex: 1,
     justifyContent: 'center',
