@@ -18,6 +18,7 @@ const HomeScreen = () => {
     navigation.navigate(label); // navigate to screen with the same name
   };
 
+  
   const colors = [
     '#FF6B6B',
     '#FFD93D',
