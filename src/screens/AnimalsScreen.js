@@ -11,16 +11,9 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 const { width, height } = Dimensions.get('window');
 
 const animalData = [
-  { id: '1', name: 'Lion', image: { uri: 'https://media.istockphoto.com/id/1333977253/photo/male-lion-resting-on-a-rock.jpg?s=612x612&w=0&k=20&c=JZSHUW-GSk49vNiTGwRryqiG2H0HgDh0q7P1Ny985L4=' } },
-  { id: '2', name: 'Elephant', image: { uri: 'https://a-z-animals.com/media/2022/09/shutterstock_2118427715-1024x711.jpg' } },
-  { id: '3', name: 'Dog', image: { uri: 'https://cdn.britannica.com/16/234216-050-C66F8665/beagle-hound-dog.jpg' } },
-  { id: '4', name: 'Cat', image: { uri: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg' } },
-  { id: '5', name: 'Tiger', image: { uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4NkmusstBoUBuvwN1tvEvaT6QaKQ7e_mHko2CsS9TqR1CpvUiRUZmFVBg67AOCQLLrNH6_DPxXXxl5vQEqodLp2xZmPVoRAIh_CZ8IpU' } },
-  { id: '6', name: 'Giraffe', image: { uri: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/Giraffe_standing.jpg' } },
-  { id: '7', name: 'Zebra', image: { uri: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Plains_Zebra_Equus_quagga.jpg' } },
-  { id: '8', name: 'Monkey', image: { uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmBtc_PQxbCKWVmJAqVbobhpwFogCre-_HKsKovqahMwF4ztbkYGcfP9Xc6YDdD3ULWBQ&usqp=CAU' } },
-  { id: '9', name: 'Horse', image: { uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ4RoSIAs7LuGYn5La5jajpGlznrZ_ictRpQ&s' } },
-  { id: '10', name: 'Panda', image: { uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm2Qx8YYYGenxcsRtWqRknEzoAJv6eg4vJXg&s' } },
+  { id: '1', name: 'Fox',image: require('../assets/animals/fox.png') },
+  { id: '2', name: 'Koala', image: require('../assets/animals/koala.png') },
+  { id: '3', name: 'Owl',image: require('../assets/animals/owl.png') },
 ];
 
 // add head/tail clones for infinite loop
@@ -93,30 +86,8 @@ const AnimalScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-       
-       
-       
-        {/* Static Header */}
-       
-       <View style={styles.header}>
-         
-         {/* Left side text */}
-       
-         <View style={styles.headerTextBlock}>
-           <Ionicons name="arrow-back-circle-outline" size={35} color="black" />
-           <Text style={styles.greeting}>Animals</Text>
-         </View>
-       
-         {/* Right side image */}
-         <Image
-           source={require('../assets/girl2.png')} // put your image path here
-           style={styles.girlImage}
-           resizeMode="contain"
-         />
-       
-       </View>
-
-
+        
+  
 
 
         {/* Center block for sliding */}
@@ -137,6 +108,12 @@ const AnimalScreen = () => {
             })}
           />
         </View>
+
+
+
+
+
+
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -182,15 +159,11 @@ girlImage: {
   // or you can use: alignSelf: 'flex-start',
 },
 
-
-
-
-
   sliderWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'grey' ,// this is for debugging 
+   // backgroundColor: 'grey' ,// this is for debugging 
   
 
    
@@ -199,12 +172,14 @@ girlImage: {
     width,
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
   image: {
     width: width * 0.7,
     height: height * 0.4,
     resizeMode: 'contain',
     marginBottom: 20,
+    //borderRadius: 20,
   },
   name: {
     fontSize: 28,
