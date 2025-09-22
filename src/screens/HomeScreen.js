@@ -9,14 +9,29 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-
+import Sound from 'react-native-sound';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const handlePress = label => {
-    navigation.navigate(label); // navigate to screen with the same name
-  };
+  
+const handlePress = (label) => {
+  const sound = new Sound('pop.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('Failed to load sound', error);
+      navigation.navigate(label);
+      return;
+    }
+
+    sound.play(() => {
+      sound.release();
+    });
+
+    // 🚀 Navigate immediately instead of waiting
+    navigation.navigate(label);
+  });
+};
+
 
   
   const colors = [
@@ -61,20 +76,20 @@ const HomeScreen = () => {
 
 
   const images = [
-  require('../assets/animal.png'),
-  require('../assets/bird.png'),
-  require('../assets/123.png'),
-  require('../assets/abc.png'),
-  require('../assets/fruits.png'),
+  require('../assets/animal.webp'),
+  require('../assets/bird.webp'),
+  require('../assets/123.webp'),
+  require('../assets/abc.webp'),
+  require('../assets/fruits.webp'),
   require('../assets/veg.png'),
-  require('../assets/color.png'),
-  require('../assets/flowers.png'),
+  require('../assets/color.webp'),
+  require('../assets/flowers.webp'),
   require('../assets/sport.png'),
   require('../assets/shape.png'),
   require('../assets/insect.png'),
-  require('../assets/car.png'),
-  require('../assets/earth.png'),
-  require('../assets/boy.png'),
+  require('../assets/car.webp'),
+  require('../assets/earth.webp'),
+  require('../assets/boy.webp'),
 ];
 
 
