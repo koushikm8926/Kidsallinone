@@ -76,20 +76,20 @@ const handlePress = (label) => {
 
 
   const images = [
-  require('../assets/animal.webp'),
-  require('../assets/bird.webp'),
-  require('../assets/123.webp'),
-  require('../assets/abc.webp'),
-  require('../assets/fruits.webp'),
-  require('../assets/veg.png'),
-  require('../assets/color.webp'),
-  require('../assets/flowers.webp'),
-  require('../assets/sport.png'),
-  require('../assets/shape.png'),
-  require('../assets/insect.png'),
-  require('../assets/car.webp'),
-  require('../assets/earth.webp'),
-  require('../assets/boy.webp'),
+  require('../assets/Home/animal.webp'),
+  require('../assets/Home/bird.webp'),
+  require('../assets/Home/123.webp'),
+  require('../assets/Home/abc.webp'),
+  require('../assets/Home/fruits.webp'),
+  require('../assets/Home/veg.png'),
+  require('../assets/Home/color.webp'),
+  require('../assets/Home/flowers.webp'),
+  require('../assets/Home/sport.png'),
+  require('../assets/Home/shape.png'),
+  require('../assets/Home/insect.png'),
+  require('../assets/Home/car.webp'),
+  require('../assets/Home/earth.webp'),
+  require('../assets/Home/boy.webp'),
 ];
 
 
