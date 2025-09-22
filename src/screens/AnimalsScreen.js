@@ -3,7 +3,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
-
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 
@@ -52,19 +51,29 @@ const AnimalScreen = () => {
     return () => clearTimeout(t);
   }, [initialized]);
 
-  const renderItem = ({ item, index }) => {
-    if (item.__clone) return <View style={{ width }} />;
-    const realIndex = index - 1;
-    return (
-      <TouchableWithoutFeedback onPress={() => speakAnimal(realIndex, true)}>
-        <View style={styles.slide}>
-          <Image source={item.image} style={styles.image} />
-          <Text style={styles.name}>{item.name}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  };
 
+
+
+const renderItem = ({ item, index }) => {
+  if (item.__clone) return <View style={{ width }} />;
+  const realIndex = index - 1;
+  return (
+    <TouchableWithoutFeedback onPress={() => speakAnimal(realIndex, true)}>
+      <View style={styles.slide}>
+        {/* Image container with borderRadius */}
+        <View style={styles.imageContainer}>
+          <Image source={item.image} style={styles.image} />
+        </View>
+
+        <Text style={styles.name}>{item.name}</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+};
+
+
+
+  
   const handleScrollEnd = (event) => {
     let index = Math.round(event.nativeEvent.contentOffset.x / width);
 
@@ -174,13 +183,16 @@ girlImage: {
     justifyContent: 'center',
     
   },
-  image: {
-    width: width * 0.7,
-    height: height * 0.4,
-    resizeMode: 'contain',
-    marginBottom: 20,
-    //borderRadius: 20,
-  },
+ imageContainer: {
+  borderRadius: 16,     // rounded corners
+  overflow: 'hidden',   // ensures image respects the border radius
+},
+
+image: {
+  width: width * 0.7,
+  height: height * 0.4,
+  resizeMode: 'cover',  // fills the container nicely
+},
   name: {
     fontSize: 28,
     fontWeight: '600',
