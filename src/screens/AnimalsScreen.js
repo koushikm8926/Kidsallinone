@@ -13,9 +13,57 @@ const animalData = [
   { id: '1', name: 'Fox',image: require('../assets/animals/fox.png') },
   { id: '2', name: 'Koala', image: require('../assets/animals/koala.png') },
   { id: '3', name: 'Owl',image: require('../assets/animals/owl.png') },
+  { id: '4', name: 'Beaver',image: require('../assets/animals/beaver.png') },
+  { id: '5', name: 'Black Bear',image: require('../assets/animals/black_bear.png') },
+  { id: '6', name: 'Brown Bear',image: require('../assets/animals/brown_bear.png') },
+  { id: '7', name: 'Cow',image: require('../assets/animals/cow.png') },
+  { id: '8', name: 'Dear',image: require('../assets/animals/dear.png') },
+  { id: '9', name: 'Eagle',image: require('../assets/animals/eagle.png') },
+  { id: '10', name: 'Girraf',image: require('../assets/animals/girraf.png') },
+  { id: '11', name: 'Hippopotamus',image: require('../assets/animals/hippopotamus.png') },
+  { id: '12', name: 'Horse',image: require('../assets/animals/horse.png') },
+  { id: '13', name: 'Lion',image: require('../assets/animals/lion.png') },
+  { id: '14', name: 'Monkey',image: require('../assets/animals/monkey.png') },
+  { id: '15', name: 'Moose',image: require('../assets/animals/moose.png') },
+  { id: '16', name: 'Penguine',image: require('../assets/animals/penguin.png') },
+  { id: '17', name: 'Pig',image: require('../assets/animals/pig.png') },
+  { id: '18', name: 'Polar Bear',image: require('../assets/animals/polar_bear.png') },
+  { id: '19', name: 'Rabbit',image: require('../assets/animals/rabbit.png') },
+  { id: '20', name: 'Red Panda',image: require('../assets/animals/red_panda.png') },
+  { id: '21', name: 'Rhinoceros',image: require('../assets/animals/rhinoceros.png') },
+  { id: '22', name: 'Sheep',image: require('../assets/animals/sheep.png') },
+  { id: '23', name: 'Wolf',image: require('../assets/animals/wolf.png') },
+  { id: '24', name: 'Zebra',image: require('../assets/animals/zebra.png') },
+
 ];
 
-const backgroundColors = ['#FFDEAD', '#C1E1C1', '#ADD8E6']; // one per animal
+const backgroundColors = [
+  '#1a555d', 
+  '#741941', 
+  '#32272F',
+  '#061220',
+   '#B2D1D4',
+   '#C9B672',
+   '#5AA3C3',
+  '#D51B4C',
+  '#398BBD',
+  '#8DC5D4',
+  '#53A4A8',
+  '#39538E',
+  '#DB9F35',
+  '#D6F0C0',
+  '#3E503A',
+  '#6E849B',
+  '#B1C6A5',
+  '#40477B',
+  '#BC8281',
+  '#9DD2BE',
+  '#839D2F',
+  '#6D6D9F',
+  '#E0BD6B',
+  '#4D2854',
+
+]; 
 
 
 // add head/tail clones for infinite loop
@@ -199,5 +247,6 @@ image: {
   name: {
     fontSize: 28,
     fontWeight: '600',
+    color:'white'
   },
 });
