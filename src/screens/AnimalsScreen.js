@@ -15,6 +15,9 @@ const animalData = [
   { id: '3', name: 'Owl',image: require('../assets/animals/owl.png') },
 ];
 
+const backgroundColors = ['#FFDEAD', '#C1E1C1', '#ADD8E6']; // one per animal
+
+
 // add head/tail clones for infinite loop
 const loopedData = [
   { ...animalData[animalData.length - 1], id: 'head-clone', __clone: true },
@@ -59,7 +62,7 @@ const renderItem = ({ item, index }) => {
   const realIndex = index - 1;
   return (
     <TouchableWithoutFeedback onPress={() => speakAnimal(realIndex, true)}>
-      <View style={styles.slide}>
+      <View style={[styles.slide, { backgroundColor: backgroundColors[realIndex] }]}>
         {/* Image container with borderRadius */}
         <View style={styles.imageContainer}>
           <Image source={item.image} style={styles.image} />
