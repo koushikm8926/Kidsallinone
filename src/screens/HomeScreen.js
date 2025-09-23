@@ -10,6 +10,8 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Sound from 'react-native-sound';
+
+
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 const HomeScreen = () => {
