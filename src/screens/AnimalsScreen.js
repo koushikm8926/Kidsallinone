@@ -4,6 +4,10 @@ import { View, Text, Image, FlatList, Dimensions, StyleSheet, TouchableWithoutFe
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import Sound from 'react-native-sound';
+
+
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,6 +46,23 @@ const backgroundColors = [
   '#B1C6A5', '#40477B', '#BC8281', '#9DD2BE',
   '#839D2F', '#6D6D9F', '#E0BD6B', '#4D2854',
 ];
+
+
+const playPopSound = () => {
+  const sound = new Sound('pop.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('Failed to load sound', error);
+      return;
+    }
+    sound.play(() => {
+      sound.release();
+    });
+  });
+};
+
+
+
+
 
 // add head/tail clones for infinite loop
 const loopedData = [
@@ -116,13 +137,19 @@ const AnimalScreen = ({ navigation }) => {
     speakAnimal(realIndex);
   };
 
+
+
+  
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: backgroundColors[currentIndex] }]}>
         
         {/* 🔙 Back Button */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity   onPress={() => {
+    playPopSound();   // play sound
+    navigation.goBack();  // 🚀 navigate immediately
+  }} >
             <Ionicons name="arrow-back" size={34} color="#fff" />
           </TouchableOpacity>
         </View>

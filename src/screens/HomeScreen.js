@@ -249,12 +249,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cell: {
-    flex: 1,
-    height: 100,
-    marginHorizontal: 10,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+   flex: 1,
+  height: 100,
+  marginHorizontal: 10,
+  borderRadius: 12, // smoother rounded corners
+  justifyContent: 'center',
+  alignItems: 'center',
+
+  // ✅ 3D shadow style
+  backgroundColor: '#fff', // shadow only shows on solid backgrounds
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.25,
+  shadowRadius: 4.65,
+  elevation: 8, // Android shadow
   },
   cellText: {
     fontSize: 18,
