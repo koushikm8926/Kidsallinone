@@ -116,7 +116,7 @@ useFocusEffect(
               <Text style={styles.kidsText}>Kids</Text>
             </View>
             <Image
-              source={require('../assets/girl2.png')}
+              source={require('../assets/Home/girl.png')}
               style={styles.girlImage}
               resizeMode="contain"
             />
