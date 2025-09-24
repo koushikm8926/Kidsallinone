@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,109 +8,115 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import LinearGradient from 'react-native-linear-gradient';
-
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  
-  const handlePress = (label) => {
-    const sound = new Sound('pop.mp3', Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log('Failed to load sound', error);
-        navigation.navigate(label);
+
+  // Ref to hold the background music Sound instance
+  const bgRef = useRef(null);
+  // popRef is no longer needed
+
+  // when screen is focused -> start bg music; when blurred -> stop & release
+ // In HomeScreen.js
+
+useFocusEffect(
+  React.useCallback(() => {
+    Sound.setCategory('Playback');
+
+    const bg = new Sound('kids_music.mp3', Sound.MAIN_BUNDLE, (err) => {
+      if (err) {
+        console.warn('bg music load failed', err);
         return;
       }
-
-      sound.play(() => {
-        sound.release();
+      bg.setNumberOfLoops(-1);
+      bg.setVolume(0.45);
+      bg.play((success) => {
+        if (!success) console.warn('bg music playback failed');
       });
-
-      // 🚀 Navigate immediately instead of waiting
-      navigation.navigate(label);
     });
+    bgRef.current = bg;
+
+    // ✅ CORRECTED CLEANUP FUNCTION
+    return () => {
+      // Capture the current sound instance in a local variable.
+      const soundInstance = bgRef.current;
+      
+      // Now, perform all operations on this stable variable.
+      if (soundInstance) {
+        soundInstance.stop(() => {
+          soundInstance.release();
+        });
+      }
+      
+      // It's safe to nullify the ref here.
+      bgRef.current = null;
+    };
+  }, [])
+);
+
+  // ✅ Simplified and more reliable handlePress function
+  const handlePress = (screenName) => {
+    // Create a new sound instance that plays once and then releases itself.
+    // This is robust and prevents crashes.
+    const popSound = new Sound('pop.mp3', Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+      // Play the sound
+      popSound.setVolume(0.8).play((success) => {
+        if (success) {
+          // Release the audio player resource once playback is complete
+          popSound.release();
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    });
+
+    // Navigate to the next screen
+    navigation.navigate(screenName);
   };
 
   const colors = [
-    '#FF6B6B',
-    '#FFD93D',
-    '#6BCB77',
-    '#4D96FF',
-    '#FF6EC7',
-    '#FF9F1C',
-    '#47b8f2',
-    '#00C9A7',
-    '#FF9671',
-    '#FFC75F',
-    '#B39CD0',
-    '#A8E6CF',
-    '#2EC4B6',
-    '#E71D36',
-    '#FFBE0B',
-    '#8338EC',
-    '#3A86FF',
-    '#FF006E',
-    '#FB5607',
-    '#06D6A0',
+    '#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#FF6EC7', '#FF9F1C',
+    '#47b8f2', '#00C9A7', '#FF9671', '#FFC75F', '#B39CD0', '#A8E6CF',
+    '#2EC4B6', '#E71D36', '#FFBE0B', '#8338EC', '#3A86FF', '#FF006E',
+    '#FB5607', '#06D6A0',
   ];
 
   const labels = [
-    'Animals',
-    'Birds',
-    'Numbers',
-    'Alphabets',
-    'Fruits',
-    'Vegetables',
-    'Colors',
-    'Flowers',
-    'Sports',
-    'Shapes',
-    'Insects',
-    'Vehicles',
-    'Planets',
-    'Body Parts',
+    'Animals', 'Birds', 'Numbers', 'Alphabets', 'Fruits', 'Vegetables',
+    'Colors', 'Flowers', 'Sports', 'Shapes', 'Insects', 'Vehicles',
+    'Planets', 'Body Parts',
   ];
 
   const images = [
-    require('../assets/Home/animal.webp'),
-    require('../assets/Home/bird.webp'),
-    require('../assets/Home/123.webp'),
-    require('../assets/Home/abc.webp'),
-    require('../assets/Home/fruits.webp'),
-    require('../assets/Home/veg.png'),
-    require('../assets/Home/color.webp'),
-    require('../assets/Home/flowers.webp'),
-    require('../assets/Home/sport.png'),
-    require('../assets/Home/shape.png'),
-    require('../assets/Home/insect.png'),
-    require('../assets/Home/car.webp'),
-    require('../assets/Home/earth.webp'),
-    require('../assets/Home/boy.webp'),
+    require('../assets/Home/animal.webp'), require('../assets/Home/bird.webp'),
+    require('../assets/Home/123.webp'), require('../assets/Home/abc.webp'),
+    require('../assets/Home/fruits.webp'), require('../assets/Home/veg.png'),
+    require('../assets/Home/color.webp'), require('../assets/Home/flowers.webp'),
+    require('../assets/Home/sport.png'), require('../assets/Home/shape.png'),
+    require('../assets/Home/insect.png'), require('../assets/Home/car.webp'),
+    require('../assets/Home/earth.webp'), require('../assets/Home/boy.webp'),
   ];
 
   return (
     <SafeAreaProvider>
-           {/* 🌈 Linear Gradient Wrapper */}
-        <LinearGradient
-          colors={['#FFDEE9', '#B5FFFC']} // Cheerful kids-friendly gradient
-          style={{ flex: 1 }}
-        >
-      <SafeAreaView style={styles.container}>
-   
+      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container}>
           <View style={styles.header}>
-            {/* Left side text */}
             <View style={styles.headerTextBlock}>
               <Ionicons name="menu-outline" size={35} color="#900" />
               <Text style={styles.greeting}>Good Morning</Text>
               <Text style={styles.kidsText}>Kids</Text>
             </View>
-
-            {/* Right side image */}
             <Image
-              source={require('../assets/girl2.png')} 
+              source={require('../assets/girl2.png')}
               style={styles.girlImage}
               resizeMode="contain"
             />
@@ -125,36 +131,26 @@ const HomeScreen = () => {
                 <View key={rowIndex} style={styles.row}>
                   {Array.from({ length: 2 }).map((_, colIndex) => {
                     const cellIndex = rowIndex * 2 + colIndex;
-                    if (cellIndex >= labels.length) return null; // safety check
+                    if (cellIndex >= labels.length) return null;
                     return (
                       <TouchableOpacity
-                        key={colIndex}
+                        key={cellIndex}
                         style={[
                           styles.cell,
-                          {
-                            backgroundColor: colors[cellIndex % colors.length],
-                            flexDirection: 'row',
-                          },
+                          { backgroundColor: colors[cellIndex % colors.length] },
                         ]}
                         activeOpacity={0.7}
                         onPress={() => handlePress(labels[cellIndex])}
                       >
-                        {/* Left side - Image (40%) */}
                         <View style={styles.cellLeftView}>
                           <Image
-                            source={images[cellIndex]}  
+                            source={images[cellIndex]}
                             style={{ width: '150%', height: '100%', marginLeft: 15 }}
                             resizeMode="contain"
                           />
                         </View>
-
-                        {/* Right side - Text (60%) */}
                         <View style={styles.cellRightView}>
-                          <Text
-                            style={styles.cellText}
-                            numberOfLines={1}
-                            ellipsizeMode="tail"
-                          >
+                          <Text style={styles.cellText} numberOfLines={1}>
                             {labels[cellIndex]}
                           </Text>
                         </View>
@@ -162,29 +158,25 @@ const HomeScreen = () => {
                     );
                   })}
                 </View>
-              ),
+              )
             )}
           </ScrollView>
 
-          {/* Footer reserved for ads */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Ad space here</Text>
           </View>
-   
-      </SafeAreaView>
-           </LinearGradient>
+        </SafeAreaView>
+      </LinearGradient>
     </SafeAreaProvider>
   );
 };
 
-export default HomeScreen;
-
+// ... your styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
   },
-
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -214,13 +206,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
   },
-
   scrollContent: {
     paddingBottom: 80,
     flexGrow: 1,
     marginTop: 10,
   },
-
   row: {
     flexDirection: 'row',
     marginBottom: 20,
@@ -230,39 +220,35 @@ const styles = StyleSheet.create({
     height: 100,
     marginHorizontal: 10,
     borderRadius: 16,
-    justifyContent: 'center',
+    flexDirection: 'row', // Added for horizontal layout
     alignItems: 'center',
     backgroundColor: '#fff',
-
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 12,
-
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.6)',
   },
-  cellText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+  cellLeftView: {
+    flex: 0.4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // No need for border radius here if the parent has it
   },
-
   cellRightView: {
     flex: 0.6,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 5,
   },
-  cellLeftView: {
-    flex: 0.4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+  cellText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center', // Ensure text is centered
   },
-
   footer: {
     height: 70,
     backgroundColor: '#4D96FF',
@@ -273,4 +259,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
   },
+  footerText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
+
+
+export default HomeScreen;
