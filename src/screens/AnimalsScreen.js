@@ -1,16 +1,26 @@
 // screens/AnimalScreen.js
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import Sound from 'react-native-sound';
 
-
-
-
+// Get screen width & height for responsive design
 const { width, height } = Dimensions.get('window');
 
+/* -----------------------------------
+   📌 Animal Data (images + names)
+----------------------------------- */
 const animalData = [
   { id: '1', name: 'Fox', image: require('../assets/animals/fox.webp') },
   { id: '2', name: 'Koala', image: require('../assets/animals/koala.webp') },
@@ -38,6 +48,9 @@ const animalData = [
   { id: '24', name: 'Zebra', image: require('../assets/animals/zebra.webp') },
 ];
 
+/* -----------------------------------
+   🎨 Background colors (per animal)
+----------------------------------- */
 const backgroundColors = [
   '#1a555d', '#741941', '#32272F', '#061220',
   '#B2D1D4', '#C9B672', '#5AA3C3', '#D51B4C',
@@ -47,7 +60,9 @@ const backgroundColors = [
   '#839D2F', '#6D6D9F', '#E0BD6B', '#4D2854',
 ];
 
-
+/* -----------------------------------
+   🔊 Play pop sound on back button
+----------------------------------- */
 const playPopSound = () => {
   const sound = new Sound('pop.mp3', Sound.MAIN_BUNDLE, (error) => {
     if (error) {
@@ -60,101 +75,141 @@ const playPopSound = () => {
   });
 };
 
-
-
-
-
-// add head/tail clones for infinite loop
+/* -----------------------------------
+   🔁 Loop Data (for infinite scroll)
+   - Adds head & tail clones so user
+     can swipe endlessly
+----------------------------------- */
 const loopedData = [
   { ...animalData[animalData.length - 1], id: 'head-clone', __clone: true },
   ...animalData,
   { ...animalData[0], id: 'tail-clone', __clone: true },
 ];
 
+/* -----------------------------------
+   🐾 AnimalScreen Component
+----------------------------------- */
 const AnimalScreen = ({ navigation }) => {
+  // Refs
   const flatListRef = useRef(null);
   const lastSpokenIndexRef = useRef(null);
-  const [initialized, setInitialized] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0); // 👈 track current animal
 
+  // States
+  const [initialized, setInitialized] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track current animal index
+
+  /* 🔊 Speak animal name */
   const speakAnimal = (realIndex, force = false) => {
     if (!animalData[realIndex]) return;
     if (!force && lastSpokenIndexRef.current === realIndex) return;
 
     try {
-      Tts.stop();
-      Tts.speak(animalData[realIndex].name);
+      Tts.stop(); // stop ongoing speech
+      Tts.speak(animalData[realIndex].name); // speak animal name
       lastSpokenIndexRef.current = realIndex;
     } catch (err) {
       console.warn('TTS error:', err);
     }
   };
 
+  /* 🚀 Initial scroll setup */
   useEffect(() => {
     const t = setTimeout(() => {
       if (flatListRef.current && !initialized) {
         flatListRef.current.scrollToIndex({ index: 1, animated: false });
-        speakAnimal(0, true);
+        speakAnimal(0, true); // speak first animal
         setInitialized(true);
       }
     }, 50);
     return () => clearTimeout(t);
   }, [initialized]);
 
-  const renderItem = ({ item, index }) => {
-    if (item.__clone) return <View style={{ width }} />;
-    const realIndex = index - 1;
-    return (
-      <TouchableWithoutFeedback onPress={() => speakAnimal(realIndex, true)}>
-        <View style={styles.slide}>
-          <View style={styles.imageContainer}>
-            <Image source={item.image} style={styles.image} />
-          </View>
-          <Text style={styles.name}>{item.name}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  };
+  // Go to next animal
+const goNext = () => {
+  let nextIndex = currentIndex + 1;
+  if (nextIndex >= animalData.length) nextIndex = 0; // loop around
+  flatListRef.current.scrollToIndex({ index: nextIndex + 1, animated: true }); // +1 because of head-clone
+  setCurrentIndex(nextIndex);
+  speakAnimal(nextIndex, true);
+};
 
+
+// Go to previous animal
+const goPrev = () => {
+  let prevIndex = currentIndex - 1;
+  if (prevIndex < 0) prevIndex = animalData.length - 1; // loop around
+  flatListRef.current.scrollToIndex({ index: prevIndex + 1, animated: true }); // +1 because of head-clone
+  setCurrentIndex(prevIndex);
+  speakAnimal(prevIndex, true);
+};
+
+
+
+
+
+  /* 📸 Render each animal card */
+const renderItem = ({ item, index }) => {
+  if (item.__clone) return <View style={{ width }} />;
+  const realIndex = index - 1;
+
+  return (
+    <View style={styles.slide}>
+      {/* Make only image clickable */}
+      <TouchableOpacity onPress={() => speakAnimal(realIndex, true)} activeOpacity={0.7}  style={styles.imageWrapper} >
+        <Image source={item.image} style={styles.image} />
+      </TouchableOpacity>
+
+      {/* Animal name (not clickable) */}
+      <Text style={styles.name}>{item.name}</Text>
+    </View>
+  );
+};
+
+  /* 🔁 Handle scroll loop + speech */
   const handleScrollEnd = (event) => {
     let index = Math.round(event.nativeEvent.contentOffset.x / width);
 
     if (index === 0) {
+      // If at head clone → jump to last animal
       flatListRef.current.scrollToIndex({ index: animalData.length, animated: false });
-      setCurrentIndex(animalData.length - 1); // 👈 update bg
+      setCurrentIndex(animalData.length - 1);
       speakAnimal(animalData.length - 1);
       return;
     }
     if (index === loopedData.length - 1) {
+      // If at tail clone → jump to first animal
       flatListRef.current.scrollToIndex({ index: 1, animated: false });
-      setCurrentIndex(0); // 👈 update bg
+      setCurrentIndex(0);
       speakAnimal(0);
       return;
     }
 
+    // Normal case → update index & speak
     const realIndex = index - 1;
-    setCurrentIndex(realIndex); // 👈 update bg
+    setCurrentIndex(realIndex);
     speakAnimal(realIndex);
   };
 
-
-
-  
+  /* -----------------------------------
+     🎨 UI Layout
+  ----------------------------------- */
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: backgroundColors[currentIndex] }]}>
         
         {/* 🔙 Back Button */}
         <View style={styles.header}>
-          <TouchableOpacity   onPress={() => {
-    playPopSound();   // play sound
-    navigation.goBack();  // 🚀 navigate immediately
-  }} >
+          <TouchableOpacity
+            onPress={() => {
+              playPopSound();   // play sound
+              navigation.goBack();  // navigate back
+            }}
+          >
             <Ionicons name="arrow-back" size={34} color="#fff" />
           </TouchableOpacity>
         </View>
 
-        {/* Slider */}
+        {/* 🐾 Animal Slider */}
         <View style={styles.sliderWrapper}>
           <FlatList
             ref={flatListRef}
@@ -173,6 +228,16 @@ const AnimalScreen = ({ navigation }) => {
           />
         </View>
 
+          {/* ⬅ Left Arrow */}
+  <TouchableOpacity onPress={goPrev} style={styles.leftArrow}>
+    <Ionicons name="chevron-back-circle" size={50} color="white" />
+  </TouchableOpacity>
+
+  {/* ➡ Right Arrow */}
+  <TouchableOpacity onPress={goNext} style={styles.rightArrow}>
+    <Ionicons name="chevron-forward-circle" size={50} color="white" />
+  </TouchableOpacity>
+
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -180,6 +245,9 @@ const AnimalScreen = ({ navigation }) => {
 
 export default AnimalScreen;
 
+/* -----------------------------------
+   🎨 Styles
+----------------------------------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -188,7 +256,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 55,
     left: 20,
-    //backgroundColor:'grey'
     zIndex: 10,
     elevation: 10, 
   },
@@ -211,10 +278,28 @@ const styles = StyleSheet.create({
     height: height * 0.4,
     resizeMode: 'cover',
   },
+  imageWrapper: {
+  borderRadius: 16,      
+  overflow: 'hidden',    
+  },
   name: {
     fontSize: 28,
     fontWeight: '600',
     color: 'white',
     marginTop: 10,
   },
+  leftArrow: {
+  position: 'absolute',
+  top: '55%',
+  left: 2,
+  zIndex: 10,
+  transform: [{ translateY: -25 }], // vertically center
+},
+rightArrow: {
+  position: 'absolute',
+  top: '55%',
+  right: 2,
+  zIndex: 10,
+  transform: [{ translateY: -25 }],
+},
 });
