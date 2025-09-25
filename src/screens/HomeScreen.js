@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,20 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  const [greeting, setGreeting] = useState("");
+
+useEffect(() => {
+    const currentHour = new Date().getHours();
+
+    if (currentHour < 12) {
+      setGreeting("Good Morning");
+    } else if (currentHour < 19) {
+      setGreeting("Good Afternoon");
+    } else {
+      setGreeting("Good Night");
+    }
+  }, []);
 
   // Ref to hold the background music Sound instance
   const bgRef = useRef(null);
@@ -112,7 +126,7 @@ useFocusEffect(
           <View style={styles.header}>
             <View style={styles.headerTextBlock}>
               <Ionicons name="menu-outline" size={35} color="#900" />
-              <Text style={styles.greeting}>Good Morning</Text>
+              <Text style={styles.greeting}>{greeting}</Text>
               <Text style={styles.kidsText}>Kids</Text>
             </View>
             <Image
@@ -162,9 +176,17 @@ useFocusEffect(
             )}
           </ScrollView>
 
+
+
+
           <View style={styles.footer}>
             <Text style={styles.footerText}>Ad space here</Text>
           </View>
+
+
+
+
+          
         </SafeAreaView>
       </LinearGradient>
     </SafeAreaProvider>
