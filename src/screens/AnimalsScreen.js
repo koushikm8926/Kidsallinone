@@ -7,7 +7,6 @@ import {
   FlatList,
   Dimensions,
   StyleSheet,
-  TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -159,6 +158,9 @@ const renderItem = ({ item, index }) => {
         <Image source={item.image} style={styles.image} />
       </TouchableOpacity>
 
+
+   
+
       {/* Animal name (not clickable) */}
       <Text style={styles.name}>{item.name}</Text>
     </View>
@@ -228,6 +230,17 @@ const renderItem = ({ item, index }) => {
           />
         </View>
 
+ {/* ◉ Progress Dots */}
+{/* 📊 Progress Bar */}
+<View style={styles.progressBarBackground}>
+  <View
+    style={[
+      styles.progressBarFill,
+      { width: `${((currentIndex + 1) / (loopedData.length - 2)) * 100}%` }, // -2 because of clones
+    ]}
+  />
+</View>
+
           {/* ⬅ Left Arrow */}
   <TouchableOpacity onPress={goPrev} style={styles.leftArrow}>
     <Ionicons name="chevron-back-circle" size={50} color="white" />
@@ -237,6 +250,21 @@ const renderItem = ({ item, index }) => {
   <TouchableOpacity onPress={goNext} style={styles.rightArrow}>
     <Ionicons name="chevron-forward-circle" size={50} color="white" />
   </TouchableOpacity>
+
+    {/* 🌱 Grass Image at Bottom */}
+    <Image
+      source={require('../assets/animals/grass1.png')} // update path here
+      style={styles.grassImage}
+      resizeMode="cover"
+    />
+
+<Image
+  source={require('../assets/animals/creeper3.png')} // update path
+  style={styles.creeperImage}
+  resizeMode="cover"
+/>
+
+
 
       </SafeAreaView>
     </SafeAreaProvider>
@@ -302,4 +330,39 @@ rightArrow: {
   zIndex: 10,
   transform: [{ translateY: -25 }],
 },
+ grassImage: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 280,   // adjust depending on your design
+    opacity: 0.9,  // slightly transparent
+    zIndex: 1,     // stays behind arrows and text
+  },
+  creeperImage: {
+  position: 'absolute',
+  top: 0,
+  width: '100%',
+  height: 430,   // adjust depending on your design
+  opacity: 0.9,  // optional for blending
+  zIndex: 1,     // behind header & arrows
+},
+progressBarBackground: {
+  position: 'absolute',
+  bottom: 220,         // sits above grass
+  left: 75,
+  //right: 20,
+  height: 10,
+  borderRadius: 5,
+  backgroundColor: 'rgba(255,255,255,0.3)', // white faint background
+  overflow: 'hidden',
+  zIndex: 5,
+  width:265,
+},
+
+progressBarFill: {
+  height: '100%',
+  borderRadius: 5,
+  backgroundColor: '#FFD93D', // cheerful yellow (you can pick any kid-friendly color)
+},
+
 });
