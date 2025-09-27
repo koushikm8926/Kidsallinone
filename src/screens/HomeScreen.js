@@ -125,12 +125,15 @@ useFocusEffect(
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerTextBlock}>
-              <Ionicons name="menu-outline" size={35} color="#900" />
+              <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                   <Ionicons name="menu-outline" size={35} color="#900" />
+              </TouchableOpacity>
+           
               <Text style={styles.greeting}>{greeting}</Text>
               <Text style={styles.kidsText}>Kids</Text>
             </View>
             <Image
-              source={require('../assets/Home/girl.png')}
+              source={require('../assets/Home/girl.png')}n
               style={styles.girlImage}
               resizeMode="contain"
             />
