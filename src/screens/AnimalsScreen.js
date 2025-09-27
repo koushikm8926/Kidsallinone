@@ -13,6 +13,10 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Tts from 'react-native-tts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import Sound from 'react-native-sound';
+import { Animated, Easing } from 'react-native';
+
+
+
 
 // Get screen width & height for responsive design
 const { width, height } = Dimensions.get('window');
@@ -89,6 +93,7 @@ const loopedData = [
    🐾 AnimalScreen Component
 ----------------------------------- */
 const AnimalScreen = ({ navigation }) => {
+
   // Refs
   const flatListRef = useRef(null);
   const lastSpokenIndexRef = useRef(null);
@@ -96,6 +101,14 @@ const AnimalScreen = ({ navigation }) => {
   // States
   const [initialized, setInitialized] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0); // Track current animal index
+
+  // ------------------------
+  // 🎬 Animated entrance values
+  // ------------------------
+  const topAnim = useRef(new Animated.Value(-500)).current;   // starts above screen
+  const bottomAnim = useRef(new Animated.Value(500)).current; // starts below screen
+
+
 
   /* 🔊 Speak animal name */
   const speakAnimal = (realIndex, force = false) => {
@@ -142,7 +155,23 @@ const goPrev = () => {
   speakAnimal(prevIndex, true);
 };
 
-
+useEffect(() => {
+  // Animate top image down and bottom image up
+  Animated.parallel([
+    Animated.timing(topAnim, {
+      toValue: 0,            // final position
+      duration: 900,        // increase duration for slow, smooth
+      easing: Easing.inOut(Easing.ease), // smooth easing
+      useNativeDriver: true, // recommended for better performance
+    }),
+    Animated.timing(bottomAnim, {
+      toValue: 0,            // final position
+      duration: 900,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }),
+  ]).start();
+}, []);
 
 
 
@@ -191,6 +220,9 @@ const renderItem = ({ item, index }) => {
     setCurrentIndex(realIndex);
     speakAnimal(realIndex);
   };
+
+
+
 
   /* -----------------------------------
      🎨 UI Layout
@@ -252,16 +284,23 @@ const renderItem = ({ item, index }) => {
   </TouchableOpacity>
 
     {/* 🌱 Grass Image at Bottom */}
-    <Image
+    <Animated.Image
       source={require('../assets/animals/grass1.png')} // update path here
-      style={styles.grassImage}
+     style={[
+    styles.grassImage,
+    { transform: [{ translateY: bottomAnim }] } // animate Y from bottom
+  ]}
       resizeMode="cover"
     />
 
-<Image
+<Animated.Image
   source={require('../assets/animals/creeper3.png')} // update path
-  style={styles.creeperImage}
+    style={[
+    styles.creeperImage,
+    { transform: [{ translateY: topAnim }] } // animate Y from top
+  ]}
   resizeMode="cover"
+  
 />
 
 
