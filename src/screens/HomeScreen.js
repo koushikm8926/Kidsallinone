@@ -13,6 +13,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
+
+
 const HomeScreen = () => {
   const navigation = useNavigation();
 
@@ -118,6 +120,8 @@ useFocusEffect(
     require('../assets/Home/insect.png'), require('../assets/Home/car.webp'),
     require('../assets/Home/earth.webp'), require('../assets/Home/boy.webp'),
   ];
+
+
 
   return (
     <SafeAreaProvider>
